@@ -1,0 +1,910 @@
+RestAssured Advanced
+
+Swagger 
+
+1.What is RestAssured ?
+2.How to implement the http methods in RestAssured
+3.Adding logs to the scripts
+4.Recap, Assignments and Questions
+
+
+Merits of API testing
+
+1.Early testing 
+2.Core functionality
+3.easier and isolated
+4.faster
+5.Easy data generation
+6.Less failures
+
+http methods
+	-get
+	-post
+	-put (Whole update)- Demolish the house and build again
+	-patch(partial update)
+	-delete
+	
+	Upto the developer to decide the functionality
+	
+	Auth types
+		-api key
+		-basic - 20-30%
+		-oauth -70-80%
+		-bearer token
+		-inherit from parent -only for postman
+		-digest
+		-no auth
+		
+	Status codes
+		- 1xx -Information
+		- 2xx - Success
+		- 3xx - Redirection
+		- 4xx - client side
+		- 5xx - server side
+		
+	Payload(combination of below is called payload)
+		-Endpoint
+			-(Server + Port)
+			-default ports -80 and 443
+			-https://dev231612.service-now.com:443/api/now/table/incident
+			-https://dev231612.service-now.com/
+			
+			
+		-Resources
+			/api/now/table
+		-header
+		-cookies
+		-data(body)
+		-authentication
+		-params
+		
+		Limitations of Postman
+			- semi automation
+			- Parallel run
+			- External data support is limited to csv and json
+			- Limited to Java script
+			- Dependency injection
+			- Single unified Injection
+			
+	Websservies vs API
+	microservices
+	
+	Rest-Assured - tool or library or API or dependency (Works only with Java)
+		- httpclient
+		- okhttp
+		- openhttp
+		- unirest
+	
+	Why Rest-Assured	
+		- community support
+		- Less coding
+		- Especially made for testers
+		- Inbuilt assertions
+		
+	Cucumber style
+		-given
+		-when
+		-then
+		
+	Five - step process
+		-Requirements
+		-Endpoint with resources
+		-Construct the request (params, auth, etc)
+		-Send the request(http methods)
+		-Validate the response
+		
+		
+	How to use Rest Assured
+		-maven
+			-build management tool
+				1.It works only in java
+				2.Create maven project
+					-Create a simple archtype project
+						- group id -(company name)
+						- artifact id - (projectname)
+						- version (LXI, AXI)
+				3. 	src/man/java
+					src/main/resources
+					src/test/java
+					src/test/resources
+					
+				4.Dependencies(search restassured latest maven dependency)
+					-Rest Assured
+					-testng
+
+	
+Five - step process
+		-Requirements
+		-Endpoint with resources
+		
+		RestAssured.baseURI = "https://dev231612.service-now.com/api/now/table/incident";
+
+		-Construct the request (params, auth, etc)
+		RestAssured.authentication=RestAssured.basic("Username","password");
+		
+		Map<string, string> querymap=new HashMap<String, String>();
+		querymap.put("sysparm_fields","number,Cateogry,sys_id");
+		querymap.put("Category","Software");
+		
+		RequestSpecification inputRequest=RestAssured.given()
+														.queryParams(querymap);
+														
+														OR
+		
+		RequestSpecification inputRequest=RestAssured.given()
+														.queryParams("sysparm_fields","Category,number,sys_id");
+		
+		-Send the request(http methods)
+		Response response=inputRequest.get();
+		
+		-Validate the response	
+		reponse.prettyPrint();
+		
+		For post request: you need to have contentType
+		
+		RequestSpecification inputRequest=RestAssured
+											.given()
+											.contentType(contentType.JSON);
+		
+		
+			
+		To create a File >>Go to src/test/resources >>Rightclick >>Other Create File
+		
+		File file=new File(./src/test/resources/data.json)
+		
+		 //Method overloading body parameter uses/accepts file as parameter and also string
+      RequestSpecification inputRequest = RestAssured.given()
+    		  								.contentType(ContentType.JSON)
+    		  								.body(file);
+											
+	
+	Agenda-9th April
+	Compiling or interpretor
+	Running
+	
+	Vishali.java
+	Vishali.class
+	
+	javac Vishali.java
+	java Vishali
+	
+	UI Editors or IDE
+	
+	Eclipse
+	Intellij
+	VS Code
+	
+	Selenium-Project name
+		IDE -record and playback
+		webdriver
+		grid
+		
+	Webservices vs API
+		- Hosted in the internet
+		-All webservices are api
+		-Not all APIs are webservices
+		-API - apache POI
+		
+	Microservices
+		-SAAS, IAAS, PAAS
+		-Software as a service
+		-amazon
+			-login - service
+			-payment -release service
+			-apparels - release
+			-electronics
+			
+			
+			-Integration - release - connect - API
+			
+			- call login - 200
+			- call apparels and call order - status codes
+			- call payment
+			- call order history
+			
+			
+	What is the use of jsonpath().get() and jsonPath().getString() are used to retrieve specific data from a JSON response
+	
+	JsonPath is used for extracting data from JSON responses.
+	
+	jsonPath().get() returns the value as an Object, which can be cast to the appropriate type.
+	
+	jsonPath().getString() is a convenience method to directly retrieve values as strings.
+	
+	These methods are particularly useful when working with REST APIs, as they allow you to easily extract and manipulate data from JSON responses.
+	
+	
+	Logs
+		-Realtime don't use system.out.println
+		-In build log is available in RestAssured
+		-You can add logs in both request and response
+			response.then().log().all();
+			
+	Traversing the response
+		-jsonPath()
+			-get()-Single value
+			-getList()-Multiple value
+			
+	Assertions(60-70%)
+			-equalTo
+				Very number equals to INC000112
+			response 
+				-header
+				-body
+				
+			-contains
+				-number contains INC000112
+				-containString
+			-hasItem
+				-find the size of the items
+					-Collect all the items and store it in the list
+				-form a for loop
+					-for(int i=0;i<size of the items;i++)
+						if(itemin the iteration){
+							return pass;
+							}
+							
+						else {
+							return failure;
+							}
+							
+			-containsString
+			
+			-assertThat
+			
+	Inbuilt assertions is a part of hamcrest
+	
+	Chaining 
+		-taking a value from response and pssing on to the next request
+		-base class
+				-commonly used methods
+				-Reusable codes
+				
+	What is dependency injection?
+			-Create a dependency among the tests
+			-Based on the run status (pass or fail), we are running the other tests
+			
+	SOA(Service oriented architecture-Microservices)
+	
+	jsonpath(): it converts your response into a get value pair.
+	
+	To get single value in response
+		-jsonpath().get("key")
+	To get array of values
+		-jsonPath().getList("Keys");
+	
+	
+	Why static?
+		-Memory Management
+		-no need to create objects
+		
+		Order of execution
+			-static varibles
+			-static blocks
+			-static method
+			
+	Cucumber
+		- Waterfall
+		- Agile
+			- scrum
+			- kanban
+			- XP
+			-Seems to be a waterfall model
+			
+		Birth of TDD - Test Driven Development
+			-testng
+				-test,code,refactor
+				-lacks the communication between technical and non-technical 
+				
+		Birth of BDD- Behaviour Driven Development
+				- Consistent vocabulary
+				
+				java-cucumber
+				c# - specflow
+				python- behave
+		
+		Cucumber
+				-dependencies
+					-cucumber dependency
+					-cucumber testng
+					
+				-eclipse plugin dependency
+					-cucumber
+					-natural
+					
+				keywords
+					-given - pre condition
+					-when - actual condition
+					-then - outcome or after an action
+					-and - Linking or chaining
+					-but - negative scenario
+					
+		Folder structure
+				-  3 folder
+					-features
+					-step definitions
+					-runners
+						-testng - mostly used
+						-junit
+						-CLI - CICD
+						
+		Difference between testng and cucumber-testng
+		
+		testng
+		cucumber-testng
+		
+		Feature: Epic(ServiceNow Incident Management)
+		Scenario: Get all incidents
+		Given set the endpoint
+		And add the auth
+		When  Send the request
+		Then Validate the reponse
+		
+		-careful when delaing with global variables
+		- {string} inside the string
+					
+		@And("add the queryParams as {string} and {string}")
+	public void setQueryParams(String key, String value) {
+		request = RestAssured.given().log().all().queryParam(key, value).contentType(ContentType.JSON);
+	}
+
+	Why cucumber?
+		-BDD approach
+			-Consistent ocabulary
+			-Communication
+			-Easily understand
+			
+			
+		-Folder structure for cucumber
+			-features
+			-steps
+			-runners
+				-testng
+				-junit
+				-CLI
+			
+		-how many feature files you can have in a project
+		-how many scenarios you can write in a feature file 
+		-how many step definitions
+		
+		Variable name - how far variable name?	
+		
+			Keywords
+				-given
+				-when
+				-then
+				-but
+				-and
+				-feature
+				-scenario
+				-glue
+				-data table
+				
+		-Pass the data in cucumber
+			-feature file - directly pass the data
+			-step definction -@when("add the params {string} {string}")
+			-receive the params in the method - public void addParams(String val1, String val2)
+		-datatable
+			-pipe symbol
+			-key, value pair
+			- |key|value|
+			
+			-step definition -@when("add the params")
+			-receive - public void addParams(DataTable value)
+				-value.asMap
+				
+			-Scenario outline and examples
+				-similar to dataprovider in testng
+				
+		If you want to run your testcase with different set of data, then use Scenario Outline
+		
+		Background:
+			-It is used to run the common code and it will run before your Scenario
+			
+			Background:
+			Given set the endpoint
+			And add the auth
+		
+		Hooks : It is used to set preconditions for your tests
+			It has two Annotations
+				@Before
+				@After
+				
+		Background: This is used to define steps that are common to all scenarios in a feature file. It runs before each scenario in the feature file.
+
+		Hooks: These are used to perform actions at different points in the test lifecycle. Common hooks include @Before and @After, which run before and after each scenario, respectively.
+				
+			Create a separate package (hooks)
+			Create a class "BaseTest" and create a method
+				public void setup(){
+					RestAssured.baseURI="https://dev231612.service-now.com/api/now/table/incident";
+					RestAssured.authentication=RestAssured.basic("admin", "password");
+					}
+			-Difference between background and hooks
+			- If I use background and hooks which one will run first
+			
+		Execution Order:
+		@Before Hooks: These are executed first, before any scenarios in the feature file.
+		Background Steps: After the @Before hooks, the Background steps are executed before each scenario.
+		Scenario Steps: The actual steps of the scenario are executed after the Background steps.
+		@After Hooks: These are executed last, after the scenario steps.
+		
+		Feature: Example feature
+
+		Background:
+		Given I am on the homepage
+
+		Scenario: Example scenario
+		When I click on the login button
+		Then I should see the login page
+		
+		@Before
+		public void beforeScenario() {
+			// This code will run before each scenario
+				System.out.println("Before Hook");
+		}
+
+		@After
+		public void afterScenario() {
+			// This code will run after each scenario
+				System.out.println("After Hook");
+		}
+		
+		Execution Order for Each Scenario:
+		@Before Hook: "Before Hook" is printed.
+		Background Step: "Given I am on the homepage" is executed.
+		Scenario Steps: "When I click on the login button" and "Then I should see the login page" are executed.
+		@After Hook: "After Hook" is printed.
+		
+		tags
+		
+		tags=@Smoke and @Regression
+		
+		Framework
+		================================================
+			-Set of rules/instrutions 
+			-make our life easier
+			-reusability
+			-robust
+			-easy to maintain
+			
+			-testng -	TDD
+			-cucumber -	BDD
+			-Appplication framework
+			
+			-Keyword driven- robot framework
+			-data driven - data
+			-hybrid framework
+			
+			Wrapper methods 
+				restAssured.get();
+				
+				public void getCall(){
+					RestAssured.get();
+				}
+				
+		Matchie and Makaia
+		
+		Matschie - 
+				Objective - Rest Automation
+				components - RestAssured + Testng(TDD) + Cucumber(BDD) + Testng(Cucumber Runner) + Allure (Reporting)
+				Maven - Java - Build tool
+				Goal - Only rest automation
+				Flavour -  Cucumber(Positive)
+						- services or Testng(Positive + Negative)
+						
+				-How to approach any framework
+					-pom.xml
+						-properties	
+											-Passing the values
+						-dependencies
+							rest-assured 			- 	used for REST api automation
+							testng					-	TDD
+							allure-cucumber5-jvm	- Report for cucumber
+							allure-testng 			- Report for testng
+							cucumber -java 			- Cucumber - BDD
+							Cucumber testng			- runner for cucumber
+							jackson-core			- related to josn
+							aspectjweaver			- java agent
+						
+						-plugin	
+							-surefire plugin - to invoke the tests if we run from maven
+							-allure - allure report maven integration
+							
+					- Folder Structure
+						-src/test/java
+							-features
+								-features
+							-hooks
+								-before and after
+							-runner
+								-runner
+							-services
+								-TDD, testng
+							-steps
+								-step definition
+								
+						-src/test/resources
+							-allure.properties - properties related to allure
+							-config.properties - environmental values
+									-server
+									-resource(endpoint)
+									-URI
+									Username and password
+						testng.xml
+							Declare whatever you want to run
+					JAva agent is listener for allure reporting
+					
+		To run the tests -> Go to the pom.xml and rightclick run as maven test
+		
+		To see the report > Go to pom.xml, rightclick run as goal allure:serve
+		
+	====================================================================================================================================
+	
+	Head- only statuscode will be displayed, it will not give any response(You can use this for sanity check)
+	Options- Will give you supported http methods for that resource/endpoint
+	
+	
+	Upstream- If your application is dependent on data of some other application
+	Downstream- If some other application is dependent on the data of your application
+	
+	JSON Schema validator-
+	
+	Seralization and Deserialization : 
+	Orchestration: 
+	
+	
+	Framework
+	
+	Makaia-
+		Objective - UI+ API Automation (Single Unified Framework)
+		-Vehicle Insurance
+			-Policy
+			-Account
+				fields - 40-50 fields
+				
+				-Create a policy manually and log it in excel
+				
+				-UI + API
+				-40 + 60
+				
+	-Component : Selenium webdriver + RestAssured + TestNG + Cucumber + Extent Report
+	-Build Tool : maven
+	-testData : excel
+	-design : selenium standalone + rest api standalone + (selenium + api)
+	
+	pom.xml
+		-dependencies  
+				-webdrivermanager - handle the browser updates 
+				-selenium-java 		-UI automation
+				-restassured 		- API automation
+				-testng				- TDD style
+				-cucumber-java		- BDD style
+				-cucumber-testng	- runner for my cucumber
+				-json-smart			- Do something with JSON
+				-poi				- Helps to read/write from/to excel
+				-extentreports		- reports
+				-commons-io			-Do something with IO/File related operations
+		-plugins
+				-maven compiler plugins	- I decide which java version to compile and execute
+				-surefire plugin		- maven test, suiteXML - Put your testng.xml
+				-maven-dependency-plugin- Helps to package the entire jars and class files 
+				
+				Makaia Framework
+(Overview + Code Explanation + Execution)
+				
+	Folder structure
+					-src/test/java
+						-features
+							-feature files
+						-lib
+							-listeners(Interface) - (trigger-Action to perform)
+								-extentreport 		- deals with reporting listener
+								-testng		  		- IRetry will listen to the status (pass, fail)
+								-webdriverlistener	- listens to all the webelement actions 
+							-rest
+							-selenium
+							-utils
+								-to read data from excel
+								-generate report
+								
+						-pages
+							-rest
+								-step definition 
+							-selenium
+								-page class, page objects
+						-runner
+							-cucumber runner
+							-hooks
+						-tests
+							-selenium
+							-API
+							-Selenium+API
+							
+						-runner
+						-tests
+					
+				- src/test/resources
+				
+				- start analysing from the testscript
+				
+				testng
+						-@BeforeSuite			- starting report
+						-@BeforeTest			- Setting values from the testcase
+						-@BeforeClass			- Starting testcase
+						-@BeforeMethod			- reading the properties/ initiating the URL/resource/auth 
+						-@Test					- Actual business logic
+						-@AfterMethod			- NA
+						-@AfterClass			- NA
+						-@AfterTest				- NA
+						-@AfterSuite			- end the report
+						
+						
+						
+	Framework: 	
+			-pom.xml
+			-folder structure
+			-frame the testng annotation flow
+			-src/test/resources
+			
+	Merits of API testing
+			-Early testing
+			-E2E automation(microservices)
+			-less failures in terms of scripting / less maintainence (scripts)
+			-easy data generation
+					-faker API
+					
+	Auth types:
+			-basic, digest
+			- api key
+			- bearer token 
+			- oauth
+			- noauth
+			- Inherit - limited to postman
+	Variables in postman
+			-local	
+			-global (Workspace specific and applies to all the collection)
+			-environment (applies to all env, if we choose the env)
+			-collection (all the requests within the collection)
+			-data (CSV, json)
+			
+	run collection for 5 times( use collection runner)
+	logs in postman (console)
+	
+	run the collection in schedues time
+			-monitor
+			-CLI
+			-newman + jenkins (cron pattern (* * *)
+			-newman run <collection path> - g <global> - e <env> (jsonformat) -n 3 -r htmlextra 
+			-build 
+			
+	Limitations of postman
+			- semi automation
+			- parallel testing is not possible
+			- Limited to JS
+			- Limited to external data support 
+			- Dependency injection
+			- single unified framework
+			
+	Preemptive and non-Preemptive
+			-RestAssured.basic
+				-RestAssured.premptive.basic()
+	Non premptive 
+		1)User makes a request to JIRA.com
+		2)Client will make a request without authentication 
+		3) Server will respond with 401 asking for credentials 
+		4) Client will  respond with credentials 
+		5)Server approves
+		6) better security 
+		
+			
+				
+	Recap
+	1 Why do we have to choose Rest Assured over postman?
+			-E2e automation
+			-dependency
+			-external data support is limited
+			-parallel execution
+			-limited to JS
+			
+	2 -Default assertions you will add to the request/api testing
+		-status code
+		-response time
+		-header
+		-status line
+		-schema validation
+		
+	3 - How do you verify the schema/structure/skeleton of the response
+		-schema validator - json -dependency
+		-programmatically
+		
+	4 - How do you add multiple query params to the request in API testing?
+		- add the multiple query params to the request (while constructing)
+		- postman - params table
+		- rest assured - queryParams
+	
+	5 - Why do we need a framework
+		- organize
+		- easy maintainence
+		- structuring
+		- reusable 
+		- Should focus only the business logic
+		- Scalable 
+		- CICD
+		
+		- allow me to run one test script, or all the test scripts or selection of testscripts
+		
+	Recap
+		-Mocking 
+			-before dev complete
+			- env down
+			- stub
+			- recorder
+			
+		- wiremock 
+			- start the wiremock server
+			- client dependency
+			- localhost(wiremock server) + port
+			- wiremock server can be hosted as a service
+			
+		Static response: 
+		
+		-template
+				-generate dynamic response
+				-start wiremock with this (--global-response-templating)
+					java -jar wiremock-jre8-standalone-2.33.2.jar --global-response-templating
+					
+	-SOAP - xml - security 
+	-Rest			- json
+	-GraphQL		- Suitable for social media similar products
+	-grPC 			- Super fast - streaming platforms and also big data
+	
+	Limitations of Rest
+		- too many end points
+		- Overfetching (you cannot limit the response)
+		- underfetching 
+		
+	GraphQL 
+		-facebook
+		-open source
+		
+		-single endpoint
+		-query format(SQL)
+		-POST Method(mostly), GET
+		-body is mandatory
+		
+		-Query  -		query format
+		-Mutations - 	modification
+		-Resolvers	-		Matching the query with the conditions - Written in JS
+		-Subscriptions - Similar to trigger - server automatically responds to the client
+		
+		GraphQL: https://{{server}}/api/now/graphql
+		
+		- query format
+			-field values and its properties
+			-filter by key or table level
+			
+		- Interview Preparation / how to migrate to API automation
+				- one programming language(Java) + enhancement - javascript + python
+					- Javascript 
+						- angularJS
+						- React JS
+						
+				- help you with some of the critical challenges faced in UI automation
+				- Cypress and playwright
+			-Python
+			-emerging AI trend 
+			
+			-One UI Tool - selenium, enhancement - cypress
+			- API tool - Postman + rest assured
+			- One cloud - AWS, Azure, GCP
+				-VM  - EC2 Instance
+				- Storage - S3
+				- iaas aws
+				- pass OS, Heroku, Azure, SAP
+				- Saas (postman,gmail)
+				
+			- Enhancement 
+				- One performance - jmeter
+				- one mobile testing - appium
+				
+			How do you approach after the classes are over 
+						-revise/practise the 6 week contents
+						-Practie sites - servicenow + jira - API + UI
+						-framework - build something like makaia 
+								-reports
+								-CICD
+						-github
+							- Cloning
+							- pull the latest code to your branch
+							-	Do the actual coding
+							- Commit the code
+							- Push the changes to the branch
+						
+						-Linkedin
+							-technical people + HR + Technical recruiters
+							
+			Challenges you have in API testing 
+						- documentation
+						- in sprint automation - mocking
+						- too many end points - Strategically design the config file
+						- Call sequencing - carefull division and clubbing of test scripts
+						- Some challenge - unsolved challenge
+						
+			Best Practices
+						-Schema Validation
+						- Data type validation
+						- Reusable code
+						- request / response chaining - independent vs dependent
+						
+			Framework - creating a framework 
+						1) Tests should be easy to read and follow 
+						2) Ability to add new tests
+								- less time to add new tests
+						3) wrappers
+						4) Test Data
+								- json
+								- excel
+								- database
+								- api
+						5) Easy maintenance
+								- Design patterns
+								- SRP (Single responsbility principle)
+								- Solid Principles
+						6)Ability to integrate with other tools
+								-extent report/testng
+								
+						7)Version control
+								- github
+								- bit bucket
+								- svn
+								- gitlab
+						8) Run in different environments
+								- c - apps-vishali - c:\\apps\\vishali
+								- mac or linux -
+						9) Ability to perform mutiple testing types 
+								- Regression
+								- Smoke
+								- Sanity
+								
+						10) Ability to execute any one specific module
+						
+						11) Parallel execution 
+						12)	CICD Processs
+						13) Results + auto trigger of email
+						14) Easy to debug
+								-Screenshots 
+								-timestamp
+						
+						15) Containisation of tests (docker) - enhancements 
+						
+						
+
+
+
+
+
+					
+		
+				
+				
+		
+	
+		
+		
+		
+			
+			
+		
+		
+		
+			
+
+				
+		
+	
+	
+	
+
+
+
