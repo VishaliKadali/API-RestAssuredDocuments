@@ -1,0 +1,93 @@
+Generation of Oauth token
+			-endpoint to generate the token
+			-go to some portal and generate with your creds
+			-import the certificates
+
+To generate an OAuth token, you'll typically follow these steps, which include setting up the endpoint, using your credentials, and possibly importing certificates. Here's a general outline:
+
+1. Identify the Endpoint to Generate the Token:
+Obtain the OAuth token generation endpoint from the API documentation you are working with.
+
+POST https://api.example.com/oauth2/token
+
+2. Generate the Token Using Your Credentials:
+
+You will typically need to provide your client credentials (client ID and client secret) to generate the token. This might require you to authenticate via a portal or API.
+
+curl -X POST https://api.example.com/oauth2/token \
+-H "Content-Type: application/x-www-form-urlencoded" \
+-d "grant_type=client_credentials&client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET"
+
+public class OAuthTokenGeneration {
+    public static void main(String[] args) {
+        // Base URI for the API
+        RestAssured.baseURI = "https://api.example.com/oauth2";
+
+        // Request to generate the OAuth token
+        Response response = RestAssured.given()
+                .contentType(ContentType.URLENC) // Sets Content-Type to application/x-www-form-urlencoded
+                .formParam("grant_type", "client_credentials")
+                .formParam("client_id", "YOUR_CLIENT_ID")
+                .formParam("client_secret", "YOUR_CLIENT_SECRET")
+                .post("/token");
+
+        // Print the response
+        response.prettyPrint();
+
+        // Extract and print the access token
+        String accessToken = response.jsonPath().getString("access_token");
+        System.out.println("Access Token: " + accessToken);
+    }
+}
+
+Steps to Import and Use Certificates with RestAssured
+Convert Certificate to a Java Keystore (if necessary): If your certificate is in PEM format, you may need to convert it to a PKCS12 format and then import it into a Java Keystore (.jks).
+
+Convert PEM to PKCS12:
+
+openssl pkcs12 -export -out keystore.p12 -inkey key.pem -in cert.pem
+
+keytool -importkeystore -deststorepass changeit -destkeypass changeit -destkeystore keystore.jks -srckeystore keystore.p12 -srcstoretype PKCS12 -srcstorepass changeit -alias 1
+
+Configure RestAssured to Use the Keystore:
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLContext;
+import java.io.FileInputStream;
+import java.security.KeyStore;
+
+public class SecureRestAssuredExample {
+    public static void main(String[] args) {
+        try {
+            // Load the keystore
+            KeyStore keyStore = KeyStore.getInstance("JKS");
+            FileInputStream keyStoreFile = new FileInputStream("path/to/your/keystore.jks");
+            keyStore.load(keyStoreFile, "keystorePassword".toCharArray());
+
+            // Initialize SSL context
+            SSLContext sslContext = SSLContexts.custom()
+                    .loadKeyMaterial(keyStore, "keystorePassword".toCharArray())
+                    .build();
+
+            // Set the SSL context in RestAssured
+            RestAssured.config = RestAssured.config().sslConfig(new SSLConfig().sslSocketFactory(new SSLSocketFactory(sslContext)));
+
+            // Perform your request
+            RequestSpecification request = RestAssured.given()
+                    .contentType("application/x-www-form-urlencoded")
+                    .formParam("grant_type", "client_credentials")
+                    .formParam("client_id", "YOUR_CLIENT_ID")
+                    .formParam("client_secret", "YOUR_CLIENT_SECRET");
+
+            Response response = request.post("https://api.example.com/oauth2/token");
+
+            // Print the response
+            response.prettyPrint();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}

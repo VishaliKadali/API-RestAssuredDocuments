@@ -14,8 +14,8 @@ Merits of API testing
 2.Core functionality
 3.easier and isolated
 4.faster
-5.Easy data generation
-6.Less failures
+5.Easy data generation (faker API-Need to add the dependency)
+6.Less failures in terms of scripting/ less maintenance
 
 http methods
 	-get
@@ -734,26 +734,8 @@ Five - step process
 		
 		- allow me to run one test script, or all the test scripts or selection of testscripts
 		
-	Recap
-		-Mocking 
-			-before dev complete
-			- env down
-			- stub
-			- recorder
-			
-		- wiremock 
-			- start the wiremock server
-			- client dependency
-			- localhost(wiremock server) + port
-			- wiremock server can be hosted as a service
-			
-		Static response: 
-		
-		-template
-				-generate dynamic response
-				-start wiremock with this (--global-response-templating)
-					java -jar wiremock-jre8-standalone-2.33.2.jar --global-response-templating
-					
+	
+	
 	-SOAP - xml - security 
 	-Rest			- json
 	-GraphQL		- Suitable for social media similar products
@@ -877,6 +859,191 @@ Five - step process
 								-timestamp
 						
 						15) Containisation of tests (docker) - enhancements 
+						
+	Merits of API testing
+		-early testing
+		-E2E automation (miscroservices)
+		-less failures in terms of scripting / less maintenance
+		-Easy Data generation
+				- faker API
+		
+	Auth type
+		-basic, digest(encryption)
+		-api key
+		-bearer
+		-Oauth
+		-noauth
+		-Inherit - limited to postman
+		
+		-Oauth
+		-noauth
+		-inherit - limited to postman
+		
+	Variable types in postman
+		-local  	-specific to the request
+		-global     -Workspace specific and applies to all the collections
+		-env		- applies to all requests, if we choose the env(QA,DEV,SIT, UAT)
+		-Collection - all the requests within the collection
+		-data 		- csv and json
+		
+	Collection run for 5 times
+		-Collection runner
+	
+	Logs in postman
+		-console
+	
+	Run the collection in a scheduled time
+		-monitor
+		-CLI
+		-newman + jenkins + cron pattern
+		
+	Preemptive and non preemptive
+		-RestAssured.basic
+			-RestAssured.preemptive.basic()
+
+		1. Non-premptive
+				1.USer makes a request to jira.com
+				2. Client will make a request without authentication
+				3. Server will respond with 401 asking for the creds
+				4.Client will respond back with the creds
+				5. Server approves
+				6. Better security
+		Preemptive
+				1. USer makes the request with creds
+				2. Faster in response
+				
+				
+		Static imports
+			-import the static packages
+		Schema validation: 
+			-structure
+				response.then().assertThat.body("result.upon_approval","MAtchers.equalTo("proceed");
+			-Objective is to verify the key or the fields
+			
+			1.Add the dependency
+				-json-schema-validator
+				
+			2.Generate a schema
+				-Generate schema from the response 
+				-Copy the generated schema and save it in a file with .json
+				
+			3.JSONSchemaValidator.matchesJsonSchema(<file>));
+				body(JsonSchemaValidator.MatchesJsonSchema(file));
+						
+				JSON Schemavalidator will not work for get request, since we get different responses, it works for post request
+
+			Documentation
+				-Endpoint(server name + port-resource)
+				-response structure
+				-auth details
+				-status code
+				-input request body
+				-query params
+				-supported http methods(get, post, and delete) post/unique identifier
+				
+			Documentation tools for API
+				-swagger - 60 - 70
+				-Html
+				-Postman
+				-confluence
+				
+			swagger
+				-powerful visual tool
+				-sandbox environment (example: Java compiler)
+				
+			-who will create the api documentation
+				-DEV
+				-BA/ Product Owner
+				-QA will not create the documentation 
+				
+			Petstore url: https://editor.swagger.io/
+				
+			Petstore editor url: (https://editor.swagger.io
+			
+			
+================================================================-Mocking============================================================================= 
+		Mocking
+			-Insprint automation
+			-before dev complete
+			- env down
+			
+		We can complete our API testing scripts
+		
+		Scenario 
+			3 API's
+				-A,B,C
+				
+			A - returns a single digit positive integer (1 to 9)
+			B - returns a single digit positive integer (1 to 9)
+			C - depends on A and B
+					- add A and B and multiply B with 6
+			
+			A - In development
+			B - Completed(Env is down)
+			C - Completed
+			
+			A=8, and B=6 (random generation between 1 to 9)
+			A=get(A) and B=get(B)
+			
+			Complete the scripting for C
+		Mocking - Just the scripting with all the assertions/validation
+		
+		Mocking
+			-Wiremock - Easy implemntation and community support
+			-mockito
+			-powermock
+			-easymock
+			
+		Wiremock
+			-Need to add the wiremock dependency
+			-Download wiremock standalone jar
+			-start the server (java -jar wiremock-jre8-standalone-2.35.0)
+			
+			
+			
+			-Stub (used for simple mocking - for one or two fields) ex: schemavalidation
+			-Recorder - Whole response, for the recorder to work system should be up for atleast once 
+			-template - dynamic response generation
+			
+			
+			In the baseURI, change the URI to localhost(this means we are routing the traffic to wiremock server)
+		
+		
+			- stub
+			- recorder
+				Enter the target url (actual url: https://dev231612.service-now.com/), wiremock server will redirect to the actual server and start recording and stop after sometime, it will create a mapping folder
+				and capture the entire response structure.
+		- wiremock 
+			- start the wiremock server
+			- client dependency
+			- localhost(wiremock server) + port
+			- wiremock server can be hosted as a service
+			
+		Static response: 
+		
+		-template
+				-generate dynamic response
+				-start wiremock with this (--global-response-templating)
+					java -jar wiremock-jre8-standalone-2.33.2.jar --global-response-templating
+					
+	Assignment1(Rest Assured)
+		-Create incident by passing the file as the body content
+		-Script should setup in a way thta, if we pass 2 files, then two incident needs to be created, 
+			if 3 files are passed, then three incidents needs to tbe created based on the content of the file
+			
+			Assignment2 (Rest Assured)
+			a)Create an incident an add below validations
+			b)log should be enabled only if there are failures
+			c)correlation-id field is present(validation here is on the  field presence not on the value
+			d) Design in such a way that all the assertion needs to be executed. If the first assertion fails it should stop the execution
+			
+		
+		
+					
+				
+			
+			
+				
 						
 						
 
